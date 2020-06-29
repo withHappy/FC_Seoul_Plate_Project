@@ -16,4 +16,4 @@ class BlogSerializer(serializers.ModelSerializer):
             'post_date',
         )
         # models.odering을 바로 사용 할 수 있으므로 확인 필요
-        ordering = ['-post_date']
+        # ordering = ['-post_date']

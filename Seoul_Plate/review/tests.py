@@ -18,7 +18,7 @@ class ReviewTestCase(APITestCase):
         """
         self.test_user = User.objects.create(username="test", password="1111")
         self.test_reviews = baker.make('review.Review', _quantity=3, )
-        self.test_restaurant = Restaurant.objects.create()
+        self.test_restaurant = Restaurant.objects.create(rest_name='abcmarket', rest_star=2.9, rest_address='seoul')
         self.review = Review.objects.create(review_text="for delete",
                                             owner_rest=self.test_restaurant,
                                             owner_user=self.test_user,

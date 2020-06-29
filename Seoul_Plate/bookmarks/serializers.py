@@ -13,7 +13,7 @@ class BookMarkSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'restaurant',
-            'bookmarks',
+            'user',
         )
 
 
