@@ -51,19 +51,15 @@ class ReviewTestCase(APITestCase):
         """
         data = {"review_text": "new review",
                 # "review_image": None,
-                "taste_value": "SOSO",
-                "owner_rest": self.test_restaurant.id,
-                "owner_user": self.test_user.id,
                 }
         self.client.force_authenticate(user=self.test_user)
 
-        response = self.client.post('/api/reviews', data=data)
+        response = self.client.post(f'/api/restaurant/{self.test_restaurant.id}/reviews', data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         review_response = Munch(response.data)
         self.assertTrue(review_response.id)
         self.assertEqual(review_response.review_text, data['review_text'])
         # self.assertEqual(review_response.review_image, data['review_image'])
-
 
     def test_should_delete_review(self):
         """
