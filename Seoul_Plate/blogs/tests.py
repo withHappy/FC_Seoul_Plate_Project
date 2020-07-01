@@ -18,6 +18,7 @@ class BlogTestCase(APITestCase):
         self.user = self.user[0]
         self.blog = Blog.objects.filter(post_owner=self.user.id).first()
 
+    # assertequal 를 시리얼라이저 있는 거 다 테스트 코드하기
     def test_post_create(self):
         """"포스트 생성"""
         data = {
@@ -26,22 +27,26 @@ class BlogTestCase(APITestCase):
         }
 
         self.client.force_authenticate(user=self.user)
-        response = self.client.post('/api/blogs/', data=data)
+        response = self.client.post('/api/blogs', data=data)
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
         blog_response = Munch(response.data)
         self.assertTrue(blog_response.id)
-        self.assertEqual(blog_response.post_contents, data['post_contents'])
         self.assertEqual(blog_response.post_owner, self.user.id)
+        self.assertEqual(blog_response.post_title, data['post_title'])
+        self.assertEqual(blog_response.post_contents, data['post_contents'])
 
     def test_post_list(self):
         """"포스트 리스트"""
         self.client.force_authenticate(user=self.user)
-        response = self.client.get('/api/blogs/')
+        response = self.client.get('/api/blogs')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for blog_response, blog in zip(response.data['results'], self.blogs[::-1]):
             self.assertEqual(blog_response['post_contents'], blog.post_contents)
             self.assertEqual(blog_response['post_owner'], blog.post_owner_id)
+            self.assertEqual(blog_response['post_title'], blog.post_title)
 
     def test_post_detail(self):
         """"포스트 디테일"""
@@ -49,9 +54,12 @@ class BlogTestCase(APITestCase):
         response = self.client.get(f'/api/blogs/{self.blog.id}')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
         blog_response = Munch(response.data)
         self.assertTrue(blog_response.id)
         self.assertEqual(blog_response.post_contents, self.blog.post_contents)
+        self.assertEqual(blog_response.post_owner, self.user.id)
+        self.assertEqual(blog_response.post_title, self.blog.post_title)
 
     def test_post_update(self):
         """포스트 업데이"""
@@ -63,9 +71,13 @@ class BlogTestCase(APITestCase):
 
         self.client.force_authenticate(user=self.user)
         response = self.client.patch(f'/api/blogs/{self.blog.id}', data=data)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
         blog_response = Munch(response.data)
         self.assertEqual(blog_response.post_contents, data['post_contents'])
+        self.assertEqual(blog_response.post_owner, self.user.id)
+        self.assertEqual(blog_response.post_title, data['post_title'])
         self.assertNotEqual(blog_response.post_contents, prev_content)
 
     def test_post_delete(self):
@@ -75,5 +87,5 @@ class BlogTestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Blog.objects.filter(pk=self.blog.id).count(), 0)
-
-
+        # 동일
+        self.assertFalse(Blog.objects.filter(pk=self.blog.id).exists())

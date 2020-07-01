@@ -22,7 +22,7 @@ class ReviewTestCase(APITestCase):
         self.review = Review.objects.create(review_text="for delete",
                                             owner_rest=self.test_restaurant,
                                             owner_user=self.test_user,
-                                            taste_value="SOSO",)
+                                            taste_value="SOSO")
 
     def test_should_get_review(self):
         """
@@ -31,13 +31,21 @@ class ReviewTestCase(APITestCase):
         """
         test_review = self.test_reviews[0]
         self.client.force_authenticate(user=test_review)
+        # trailing slash 설정 변경 필요
         response = self.client.get(f'/api/reviews/{test_review.id}')
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['id'], test_review.id)
         self.assertEqual(response.data['review_text'], test_review.review_text)
         self.assertEqual(response.data['review_image'], test_review.review_image)
 
     def test_should_create_review(self):
+        # nested router 사용
+        # https://github.com/alanjds/drf-nested-routers
+        # ex) POST - /api/restaurant/123/reviews
+        # ex) POST users/123/posts/456/comments/678/likes/999
+        # ex) DELETE /likes/999
+
         """
         Request : POST - /api/reviews/
         """
@@ -49,7 +57,7 @@ class ReviewTestCase(APITestCase):
                 }
         self.client.force_authenticate(user=self.test_user)
 
-        response = self.client.post('/api/reviews/', data=data)
+        response = self.client.post('/api/reviews', data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         review_response = Munch(response.data)
         self.assertTrue(review_response.id)
@@ -83,6 +91,7 @@ class ReviewTestCase(APITestCase):
                 }
         self.client.force_authenticate(user=self.test_user)
         response = self.client.put(f'/api/reviews/{self.review.id}', data=data)
+
         review_response = Munch(response.data)
         self.assertTrue(review_response.id)
         self.assertNotEqual(review_response.review_text, prev_text)
@@ -99,6 +108,7 @@ class ReviewTestCase(APITestCase):
                 }
         self.client.force_authenticate(user=self.test_user)
         response = self.client.patch(f'/api/reviews/{self.review.id}', data=data)
+
         review_response = Munch(response.data)
         self.assertTrue(review_response.id)
         self.assertNotEqual(review_response.review_text, prev_text)

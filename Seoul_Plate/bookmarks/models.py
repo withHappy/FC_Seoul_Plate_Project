@@ -31,6 +31,3 @@ class BookMark(models.Model):
     class Meta:
         ordering = ['-id']
         unique_together = ['user', 'restaurant']
-        # constraints = [
-        #     models.UniqueConstraint(fields=['restaurant', 'user'], name='restaurant__user_id')
-        # ]

@@ -4,7 +4,7 @@ from django.db import models
 from restaurant.models import Restaurant
 
 
-class Tastechoice (models.TextChoices):
+class Tastechoice(models.TextChoices):
     GOOD = 'GOOD'
     SOSO = 'SOSO'
     BAD = 'BAD'
@@ -33,10 +33,9 @@ class Review(models.Model):
     #     (BAD, 'Bad'),
     # ]
 
-
     # 리뷰 식당
     # 적절한 related_name 설정
-    owner_rest = models.ForeignKey(Restaurant, related_name='owner_rest', on_delete=models.CASCADE, null = True)
+    owner_rest = models.ForeignKey(Restaurant, related_name='owner_rest', on_delete=models.CASCADE, null=True)
     # 작성 유저
     # null=False
     owner_user = models.ForeignKey(User, related_name='owner_user', on_delete=models.CASCADE, null=True)
