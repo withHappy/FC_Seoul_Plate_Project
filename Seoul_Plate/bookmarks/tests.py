@@ -27,7 +27,7 @@ class BookMarkTestCode(APITestCase):
             'restaurant': self.test_restaurant.id
         }
 
-        response = self.client.post('/api/bookmark/', data=data)
+        response = self.client.post('/api/bookmark', data=data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(response.data['id'])
         self.assertEqual(response.data['restaurant'], data['restaurant'])
@@ -45,19 +45,19 @@ class BookMarkTestCode(APITestCase):
 
     def test_bookmark_duplicate(self):
         self.client.force_authenticate(user=self.user)
+        baker.make('bookmarks.BookMark', user=self.user, restaurant_id=self.test_restaurant.id)
+
         data = {
             'restaurant': self.test_restaurant.id
         }
-        response = self.client.post('/api/bookmark/', data=data)
-        response2 = self.client.post('/api/bookmark/', data=data)
+        response = self.client.post('/api/bookmark', data=data)
 
         self.assertEqual(BookMark.objects.filter(
             restaurant=data['restaurant'],
             user=self.user,
         ).count(), 1)
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response2.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_bookmark_count(self):
         for i in range(3):
@@ -65,6 +65,6 @@ class BookMarkTestCode(APITestCase):
             data = {
                 'restaurant': self.test_restaurant.id
             }
-            response = self.client.post('/api/bookmark/', data=data)
+            response = self.client.post('/api/bookmark', data=data)
 
         self.assertEqual(BookMark.objects.filter(restaurant=self.test_restaurant).count(), 3)

@@ -14,9 +14,9 @@ class Restaurant(models.Model):
     # 음식 종류
     rest_food = models.CharField(max_length=30, null=True, default=None)
     # 가격
-    rest_sale = models.PositiveIntegerField(null=True, default=None)
+    rest_sale = models.CharField(max_length=20, null=True, default=None)
     # 영업 시간
-    rest_time = models.CharField(max_length=10 ,null=True, default=None)
+    rest_time = models.CharField(max_length=10, null=True, default=None)
     # 쉬는 시간
     rest_break_time = models.CharField(max_length=10, null=True, default=None)
     # 북마크 개수

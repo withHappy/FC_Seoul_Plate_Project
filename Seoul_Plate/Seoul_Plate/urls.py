@@ -20,14 +20,10 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/reviews/', include('review.urls')),
-    path('api/blogs/', include('blogs.urls')),
-    path('api/restaurant/', include('restaurant.urls')),
-    path('api/user/', include('user.urls')),
-    path('api/bookmark/', include('bookmarks.urls')),
+    path('api/', include('core.urls')),
 ]
 
-urlpatterns += [
-    path('api-auth/', include('rest_framework.urls')),
-
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# urlpatterns += [
+#                    path('api-auth/', include('rest_framework.urls')),
+#
+#                ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
